@@ -27,14 +27,14 @@ def set_custom_prompt():
     return prompt
 
 #Retrieval QA Chain
-# def retrieval_qa_chain(llm, prompt, db):
-#     qa_chain = RetrievalQA.from_chain_type(llm=llm,
-#                                        chain_type='stuff',
-#                                        retriever=db.as_retriever(search_kwargs={'k': 2}),
-#                                        return_source_documents=True,
-#                                        chain_type_kwargs={'prompt': prompt}
-#                                        )
-#     return qa_chain
+def retrieval_qa_chain(llm, prompt, db):
+    qa_chain = RetrievalQA.from_chain_type(llm=llm,
+                                       chain_type='stuff',
+                                       retriever=db.as_retriever(search_kwargs={'k': 2}),
+                                       return_source_documents=True,
+                                       chain_type_kwargs={'prompt': prompt}
+                                       )
+    return qa_chain
 
 #Loading the model
 def load_llm():
@@ -51,7 +51,7 @@ def load_llm():
 def qa_bot():
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",
                                        model_kwargs={'device': 'cpu'})
-    db = FAISS.load_local(DB_FAISS_PATH, embeddings)
+    db = FAISS.load_local(DB_FAISS_PATH, embeddings, allow_dangerous_deserialization=True)
     llm = load_llm()
     qa_prompt = set_custom_prompt()
     qa = retrieval_qa_chain(llm, qa_prompt, db)
